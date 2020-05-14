@@ -1,7 +1,6 @@
 package inspect
 
 import (
-	"context"
 	"fmt"
 	"go/ast"
 
@@ -9,8 +8,8 @@ import (
 )
 
 var (
-	Name       = "inspector"
-	inspectTag = "inspect"
+	Name                       = "inspector"
+	inspectTag broodmother.Tag = "inspect"
 )
 
 type Inspector struct {
@@ -27,25 +26,15 @@ func (*Inspector) Filter() broodmother.Filterer {
 	return broodmother.FilterNothing
 }
 
-type inspectPowerKeyType string
-
-var inspectPowerKey inspectPowerKeyType = "inspect-power"
-
-func (hg *Inspector) Visit(ctx context.Context, node ast.Node) (bool, context.Context) {
+func (hg *Inspector) Visit(ctx broodmother.Context, node ast.Node) bool {
 	if node == nil {
 		hg.counter--
-		return false, ctx
+		return false
 	}
-	tags := broodmother.ParseDocumentTags(node)
-	if tags.Has(inspectTag) {
-		ctx = context.WithValue(ctx,
-			inspectPowerKey, tags.GetBool(inspectTag))
-	}
-
 	hg.counter++
-	if ok, _ := ctx.Value(inspectPowerKey).(bool); ok {
-		fmt.Printf("%d]\t(%T)\t%s\t(%d, %d)\n",
-			hg.counter, node, node, node.Pos(), node.End())
+	value, _ := ctx.Get(inspectTag)
+	if s, _ := value.(string); s == "on" {
+		fmt.Printf("%d]\t(%T)\t%+v\n", hg.counter, node, node)
 	}
-	return true, ctx
+	return true
 }

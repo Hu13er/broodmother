@@ -1,16 +1,15 @@
 package broodmother
 
 import (
-	"context"
 	"go/ast"
 )
 
 type (
 	Filterer interface {
-		Allowed(ctx context.Context, node ast.Node) bool
+		Allowed(ctx Context, node ast.Node) bool
 	}
 
-	FilterFunc func(ctx context.Context, node ast.Node) bool
+	FilterFunc func(ctx Context, node ast.Node) bool
 	FilterList []Filterer
 	FilterAny  []Filterer
 	FilterTags []string
@@ -22,15 +21,15 @@ var (
 	_ Filterer = (FilterList)(nil)
 
 	// Some Singletons
-	FilterAll     = FilterFunc(func(context.Context, ast.Node) bool { return false })
-	FilterNothing = FilterFunc(func(context.Context, ast.Node) bool { return true })
+	FilterAll     = FilterFunc(func(Context, ast.Node) bool { return false })
+	FilterNothing = FilterFunc(func(Context, ast.Node) bool { return true })
 )
 
-func (f FilterFunc) Allowed(ctx context.Context, node ast.Node) bool {
+func (f FilterFunc) Allowed(ctx Context, node ast.Node) bool {
 	return f(ctx, node)
 }
 
-func (fl FilterList) Allowed(ctx context.Context, node ast.Node) bool {
+func (fl FilterList) Allowed(ctx Context, node ast.Node) bool {
 	for _, f := range fl {
 		if !f.Allowed(ctx, node) {
 			return false
@@ -39,7 +38,7 @@ func (fl FilterList) Allowed(ctx context.Context, node ast.Node) bool {
 	return true
 }
 
-func (fa FilterAny) Allowed(ctx context.Context, node ast.Node) bool {
+func (fa FilterAny) Allowed(ctx Context, node ast.Node) bool {
 	for _, f := range fa {
 		if f.Allowed(ctx, node) {
 			return true
@@ -48,10 +47,10 @@ func (fa FilterAny) Allowed(ctx context.Context, node ast.Node) bool {
 	return false
 }
 
-func (tf FilterTags) Allowed(ctx context.Context, node ast.Node) bool {
+func (tf FilterTags) Allowed(ctx Context, node ast.Node) bool {
 	tags := ParseDocumentTags(node)
 	for _, t := range tf {
-		if !tags.Has(t) {
+		if _, exists := tags[t]; !exists {
 			return false
 		}
 	}
