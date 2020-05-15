@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"gitlab.com/pirates1/broodmother"
+	"gitlab.com/pirates1/broodmother/httpgen"
 	"gitlab.com/pirates1/broodmother/inspect"
 )
 
@@ -22,6 +23,7 @@ func generate(cmd *cobra.Command, args []string) {
 	exec := broodmother.Executor{
 		Generators: []broodmother.Generator{
 			&inspect.Inspector{},
+			&httpgen.HttpGen{},
 		},
 	}
 	if err := exec.ParseFile(path); err != nil {

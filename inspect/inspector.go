@@ -26,15 +26,15 @@ func (*Inspector) Filter() broodmother.Filterer {
 	return broodmother.FilterNothing
 }
 
-func (hg *Inspector) Visit(ctx broodmother.Context, node ast.Node) bool {
+func (hg *Inspector) Visit(ctx broodmother.Context, node ast.Node) (bool, error) {
 	if node == nil {
 		hg.counter--
-		return false
+		return false, nil
 	}
 	hg.counter++
 	value, _ := ctx.Get(inspectTag)
 	if s, _ := value.(string); s == "on" {
 		fmt.Printf("%d]\t(%T)\t%+v\n", hg.counter, node, node)
 	}
-	return true
+	return true, nil
 }

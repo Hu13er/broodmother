@@ -48,9 +48,8 @@ func (fa FilterAny) Allowed(ctx Context, node ast.Node) bool {
 }
 
 func (tf FilterTags) Allowed(ctx Context, node ast.Node) bool {
-	tags := ParseDocumentTags(node)
 	for _, t := range tf {
-		if _, exists := tags[t]; !exists {
+		if _, exists := ctx.Get(Tag(t)); !exists {
 			return false
 		}
 	}
