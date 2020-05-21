@@ -2,7 +2,6 @@ package httpgen
 
 import (
 	"errors"
-	"fmt"
 	"go/ast"
 	"path"
 
@@ -110,11 +109,8 @@ func (g *HttpGen) Visit(ctx broodmother.Context, node ast.Node) (bool, error) {
 
 func (g *HttpGen) Finalize(ctx broodmother.Context) ([]broodmother.File, error) {
 	jsons := g.genJSONTypes(ctx)
-	fmt.Println(jsons)
 	httpserver := g.genHttpServer(ctx)
-	fmt.Println(httpserver)
 	client := g.genClient(ctx)
-	fmt.Println(client)
 	return []broodmother.File{
 		{
 			Path:    path.Join(g.serverPath, "httpserver.httpgen.go"),
@@ -139,6 +135,8 @@ func parseVarList(lst *ast.Field) []varDef {
 		typ = typed.String()
 	case *ast.SelectorExpr:
 		typ = typed.X.(*ast.Ident).String() + "." + typed.Sel.Name
+	default:
+		panic("Unsupported data type:" + lst.Tag.Kind.String())
 	}
 	for _, n := range lst.Names {
 		outp = append(outp, varDef{n.String(), typ})

@@ -5,6 +5,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"path/filepath"
 	"strings"
 )
 
@@ -23,6 +24,11 @@ type Executor struct {
 }
 
 func (e *Executor) ParseFile(path string) error {
+	var err error
+	path, err = filepath.Abs(path)
+	if err != nil {
+		return err
+	}
 	fs := token.NewFileSet()
 	f, err := parser.ParseFile(
 		fs, path, nil, parser.AllErrors|parser.ParseComments)
