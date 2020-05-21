@@ -21,13 +21,13 @@ type varDef struct {
 }
 
 type HttpGen struct {
-	name           string
-	serverPath     string
-	structName     string
-	coreTypePkg    string
-	coreTypeImport string
-	coreTypeName   string
-	funcs          []funcDef
+	name         string
+	serverPath   string
+	structName   string
+	corePkg      string
+	coreImport   string
+	coreTypeName string
+	funcs        []funcDef
 }
 
 var (
@@ -58,7 +58,7 @@ func (g *HttpGen) Visit(ctx broodmother.Context, node ast.Node) (bool, error) {
 	}
 
 	var err error
-	g.coreTypePkg, g.coreTypeImport, err =
+	g.corePkg, g.coreImport, err =
 		broodmother.GetPackage(ctx.Path())
 	if err != nil {
 		return false, err
@@ -113,6 +113,8 @@ func (g *HttpGen) Finalize(ctx broodmother.Context) ([]broodmother.File, error) 
 	fmt.Println(jsons)
 	httpserver := g.genHttpServer(ctx)
 	fmt.Println(httpserver)
+	client := g.genClient(ctx)
+	fmt.Println(client)
 	return []broodmother.File{
 		{
 			Path:    path.Join(g.serverPath, "httpserver.httpgen.go"),
@@ -121,6 +123,10 @@ func (g *HttpGen) Finalize(ctx broodmother.Context) ([]broodmother.File, error) 
 		{
 			Path:    path.Join(g.serverPath, "jsons.httpgen.go"),
 			Content: jsons,
+		},
+		{
+			Path:    path.Join(g.serverPath, "/client/client.httpgen.go"),
+			Content: client,
 		},
 	}, nil
 }
