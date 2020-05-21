@@ -2,6 +2,7 @@ package httpgen
 
 import (
 	"bytes"
+	"fmt"
 	"strings"
 	"text/template"
 
@@ -17,7 +18,7 @@ import (
 
 	"github.com/gorilla/mux"
 	{{range .Imports}}
-	"{{.}}"{{end}}
+	{{.}}{{end}}
 )
 
 type {{.StructName}} struct {
@@ -41,11 +42,11 @@ func (h *{{$.StructName}}) handle{{.Name}}(w http.ResponseWriter, r *http.Reques
 	{{end}} {{if .Results }}
 	{{call $.Join ", " .Results}} := h.Core.{{.Name}}(
 		{{call $.AllCamelCase .Params | call $.AllPrefix "request." | call $.Join ", "}})
-	response := {{.Name}}JSONResponse { {{range .Results}}
+	response := {{.Name}}JSONResponses { {{range .Results}}
 		{{call $.CamelCase .}}: {{.}},{{end}}
 	}
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		w.WriteHeader(http.StatusServerInternalError)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	{{else}}
@@ -78,6 +79,7 @@ func (g *HttpGen) genHttpServer(ctx broodmother.Context) string {
 		methods = append(methods, m)
 	}
 	buf := &bytes.Buffer{}
+	imp := fmt.Sprintf("%s %q", g.coreTypePkg, g.coreTypeImport)
 	t.Execute(buf, struct {
 		Package    string
 		Imports    []string
@@ -91,9 +93,9 @@ func (g *HttpGen) genHttpServer(ctx broodmother.Context) string {
 		Join         func(string, []string) string
 	}{
 		Package:    broodmother.CamelCase(g.name, false),
-		Imports:    []string{"holyshit"},
-		StructName: "HttpServer",
-		CoreType:   "slardar.Interface",
+		Imports:    []string{imp},
+		StructName: g.structName,
+		CoreType:   g.coreTypePkg + "." + g.coreTypeName,
 		Methods:    methods,
 
 		CamelCase: func(s string) string {

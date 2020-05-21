@@ -21,9 +21,13 @@ type varDef struct {
 }
 
 type HttpGen struct {
-	name       string
-	serverPath string
-	funcs      []funcDef
+	name           string
+	serverPath     string
+	structName     string
+	coreTypePkg    string
+	coreTypeImport string
+	coreTypeName   string
+	funcs          []funcDef
 }
 
 var (
@@ -53,15 +57,27 @@ func (g *HttpGen) Visit(ctx broodmother.Context, node ast.Node) (bool, error) {
 		return false, nil
 	}
 
+	var err error
+	g.coreTypePkg, g.coreTypeImport, err =
+		broodmother.GetPackage(ctx.Path())
+	if err != nil {
+		return false, err
+	}
+	g.coreTypeName = node.(*ast.TypeSpec).Name.String()
 	g.name = node.(*ast.TypeSpec).Name.String()
 	if name, exists := ctx.
 		Get(broodmother.Tag("httpgen.name")); exists {
 		g.name = broodmother.CamelCase(name.(string), true)
 	}
-	g.serverPath = path.Join(ctx.Path(), "http")
+	g.serverPath = path.Join(path.Dir(ctx.Path()), "http")
 	if sp, exists := ctx.
 		Get(broodmother.Tag("httpgen.server-path")); exists {
 		g.serverPath = path.Join(ctx.Path(), sp.(string))
+	}
+	g.structName = "HttpServer"
+	if sn, exists := ctx.
+		Get(broodmother.Tag("httpgen.struct-name")); exists {
+		g.structName = sn.(string)
 	}
 
 	iface := node.(*ast.TypeSpec).Type.(*ast.InterfaceType)

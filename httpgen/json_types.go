@@ -49,7 +49,6 @@ func (g *HttpGen) genJSONTypes(ctx broodmother.Context) string {
 	responses := make([]strct, 0)
 	imports := make(map[string]string)
 
-	fmt.Println(ctx.Imports())
 	// TODO: we should use go/build package for
 	// checking imports.
 	// Now, this code assumes that folder name and

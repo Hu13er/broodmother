@@ -2,8 +2,25 @@ package broodmother
 
 import (
 	"fmt"
+	"go/build"
+	"path"
 	"strings"
 )
+
+func GetPackage(p string) (pkgName, importPath string, err error) {
+	if path.Ext(p) != "" {
+		p, _ = path.Split(p)
+	}
+	p = strings.TrimSuffix(p, "/")
+	p = strings.TrimPrefix(p, build.Default.GOPATH+"/src/")
+	pkg, err := build.Default.Import(p, "", build.ImportComment)
+	if err != nil {
+		return "", "", err
+	}
+	pkgName = pkg.Name
+	importPath = pkg.ImportPath
+	return pkgName, importPath, nil
+}
 
 func SnakeCase(camel string) string {
 	isUpper := func(c byte) bool {
