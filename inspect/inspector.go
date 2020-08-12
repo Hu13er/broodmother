@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"go/ast"
 
-	"gitlab.com/pirates1/broodmother"
+	"github.com/Hu13er/broodmother"
 )
 
 var (

@@ -5,9 +5,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"gitlab.com/pirates1/broodmother"
-	"gitlab.com/pirates1/broodmother/httpgen"
-	"gitlab.com/pirates1/broodmother/inspect"
+	"github.com/Hu13er/broodmother"
+	"github.com/Hu13er/broodmother/httpgen"
+	"github.com/Hu13er/broodmother/inspect"
 )
 
 // generateCmd represents the generate command

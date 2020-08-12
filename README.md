@@ -1,4 +1,4 @@
-![slardar](image/broodmother-big.jpeg "broodmother")
+![broodmother](image/broodmother-big.jpeg "broodmother")
 
 # Broodmother
 
@@ -9,31 +9,14 @@ For centuries, Black Arachnia the Broodmother lurked in the dark lava tubes bene
 
 ## Getting Started
 
-First make sure that you have [created and added your SSH public key in gitlab](https://docs.gitlab.com/ee/gitlab-basics/create-your-ssh-keys.html).
-
-
-For cloning the project with `go get` dependency management ecosystem, first you need to change your git configuration.
-`go get` uses git internally. The following one liners will make git and consequently `go get` clone your package via SSH:
-
+You can `go get` project as usual (_NOTE:_ you might want to start your VPN stuff.):
 ```bash
-$ git config --global url."git@gitlab.com:".insteadOf "https://gitlab.com/"
-```
-
-So you can `go get` project as usual (_NOTE:_ you might want to start your VPN stuff.):
-```bash
-$ go get gitlab.com/pirates1/slardar
+$ go get gitlab.com/Hu13er/broodmother
 ```
 
 Use `test` and `build` commands to test and compile the project:
 ```bash
-$ cd $GOPATH/src/gitlab.com/pirates1/broodmother
+$ cd $GOPATH/src/Hu13er/broodmother
 $ go test ./...
 $ go build -o broodmother ./cmd
 ```
-
-## Useful Resources
-
-Check these resources out:
-
-* https://github.com/spf13/cobra
-* https://github.com/spf13/viper

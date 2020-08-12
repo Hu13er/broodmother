@@ -5,7 +5,7 @@ import (
 	"go/ast"
 	"path"
 
-	"gitlab.com/pirates1/broodmother"
+	"github.com/Hu13er/broodmother"
 )
 
 type funcDef struct {
@@ -108,6 +108,9 @@ func (g *HttpGen) Visit(ctx broodmother.Context, node ast.Node) (bool, error) {
 }
 
 func (g *HttpGen) Finalize(ctx broodmother.Context) ([]broodmother.File, error) {
+	if g.name == "" {
+		return []broodmother.File{}, nil
+	}
 	jsons := g.genJSONTypes(ctx)
 	httpserver := g.genHttpServer(ctx)
 	client := g.genClient(ctx)

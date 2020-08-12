@@ -1,4 +1,4 @@
-module gitlab.com/pirates1/broodmother
+module github.com/Hu13er/broodmother
 
 go 1.13
 
